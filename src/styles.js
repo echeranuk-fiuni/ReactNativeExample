@@ -8,9 +8,21 @@ const styles = StyleSheet.create({
       fontSize: 20,
       fontWeight: 'bold',
     },
-    flex1: {
+    list: {
+      flex: 2,
+    },
+    form: {
       flex: 1,
     },
+    bordered: {
+      borderColor: 'black',
+      borderWidth: 2,
+      borderStyle: 'solid',
+    },
+    icon: {
+      width: 20,
+      height: 20,
+    }
 });
 
 export default styles;

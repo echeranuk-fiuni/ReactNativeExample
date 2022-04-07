@@ -48,15 +48,16 @@ const App = () => {
 
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.flex1}>
+      <ScrollView style={styles.list}>
         <StudentsList
           data={students}
           onEdit={handleStudentEdit}
           onRemove={handleStudentRemove}
         />
       </ScrollView>
-      <View style={styles.flex1}>
+      <View style={styles.form}>
         <StudentForm
+          style={styles.bordered}
           onStudentSubmit={handleStudentSubmit}
           studentOnEdit={studentOnEdit}
         />

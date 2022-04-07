@@ -42,7 +42,7 @@ const StudentForm = props => {
     };
 
     return (
-        <View>
+        <View style={props.style}>
             <AppText>Formulario de Estudiante</AppText>
             <AppText>Nombre:</AppText>
             <TextInput value={firstName} onChangeText={setFirstName} />
