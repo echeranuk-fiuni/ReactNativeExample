@@ -15,3 +15,7 @@ export const useDeleteUser = () => {
 export const useUpdateUser = () => {
     return useCallEndpoint('put', '/users/:id');
 };
+
+export const useGetUser = () => {
+    return useCallEndpoint('get', '/users/:id');
+}

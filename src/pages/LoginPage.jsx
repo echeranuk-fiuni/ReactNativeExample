@@ -4,7 +4,9 @@ import { useLogin } from '../api/sessions';
 import AppText from '../components/AppText';
 import SessionContext from '../contexts/sessionContext';
 
-const LoginPage = () => {
+const LoginPage = props => {
+
+    const navigation = props.navigation;
 
     const { sessionToken, setSessionToken } = useContext(SessionContext);
     const [username, setUsername] = useState('');
@@ -17,11 +19,17 @@ const LoginPage = () => {
     } = useLogin();
 
     useEffect(() => {
-        if (data) {
+        if (data && !error) {
             const token = data.token;
             setSessionToken(`Bearer ${token}`);
         }
     }, [data]);
+
+    useEffect(() => {
+        if (sessionToken) {
+            navigation.navigate('Users');
+        }
+    }, [sessionToken]);
 
     if (sessionToken) {
         return <></>;
@@ -45,6 +53,7 @@ const LoginPage = () => {
             <AppText>Contrasena:</AppText>
             <TextInput value={password} onChangeText={setPassword} />
             <Button title='Login' onPress={handleLogin} />
+            <Button title='Volver a Home' onPress={() => navigation.navigate('Home')} />
         </View>
     )
 };

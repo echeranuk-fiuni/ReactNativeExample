@@ -5,6 +5,7 @@ import AppText from './AppText';
 
 const editImg = require('../img/edit.png');
 const deleteImg = require('../img/delete.png');
+const showImg = require('../img/show.png');
 
 const UsersList = props => {
 
@@ -14,6 +15,9 @@ const UsersList = props => {
             <View key={id}>
                 <AppText>
                     {id}: {firstName} {lastName} ({username} - {role})
+                    <TouchableOpacity onPress={() => props.onShow(id)}>
+                        <Image style={styles.icon} source={showImg} />
+                    </TouchableOpacity>
                     <TouchableOpacity onPress={() => props.onRemove(id)}>
                         <Image style={styles.icon} source={deleteImg} />
                     </TouchableOpacity>

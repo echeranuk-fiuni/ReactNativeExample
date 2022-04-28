@@ -1,26 +1,22 @@
-import { useState, useEffect, useContext } from 'react';
+import { useIsFocused } from '@react-navigation/native';
+import { useEffect, useContext } from 'react';
 import { View, ScrollView, Text, Button } from 'react-native';
-import { useCreateUser, useDeleteUser, useListUsers, useUpdateUser } from '../api/users';
-import UserForm from '../components/UserForm';
+import { useLogout } from '../api/sessions';
+import { useDeleteUser, useListUsers } from '../api/users';
 import UsersList from '../components/UsersList';
 import SessionContext from '../contexts/sessionContext';
 import styles from '../styles';
 
-const UsersPage = () => {
-  const { sessionToken, setSessionToken } = useContext(SessionContext);
-  const [userOnEdit, setUserOnEdit] = useState(undefined);
+const UsersPage = props => {
+  const navigation = props.navigation;
+  
+  const { sessionToken, setSessionToken, validationError, setValidationError } = useContext(SessionContext);
   const { 
     call: listUsers, 
     data: users, 
     error: listUsersError, 
     loading: listUsersLoading 
   } = useListUsers();
-  const { 
-    call: createUser, 
-    data: createUserData, 
-    error: createUserError, 
-    loading: createUserLoading 
-  } = useCreateUser();
   const {
     call: deleteUser,
     data: deleteUserData,
@@ -28,76 +24,60 @@ const UsersPage = () => {
     loading: deleteUserLoading,
   } = useDeleteUser();
   const {
-    call: updateUser,
-    data: updateUserData,
-    error: updateUserError,
-    loading: updateUserLoading,
-  } = useUpdateUser();
+    call: logout,
+  } = useLogout();
+  const focused = useIsFocused();
 
   useEffect(() => {
-    if(sessionToken){
+    if(sessionToken && focused){
       listUsers();
     }
-  }, [sessionToken]);
+  }, [sessionToken, focused]);
 
   useEffect(() => {
-    if (createUserData || deleteUserData || updateUserData) {
+    if (deleteUserData) {
       listUsers();
     }
-  }, [createUserData, deleteUserData, updateUserData]);
+  }, [deleteUserData]);
 
-  if (!sessionToken) {
-    return <></>;
-  }
-
-  const error = listUsersError || createUserError || deleteUserError || updateUserError;
-  const loading = listUsersLoading || createUserLoading || deleteUserLoading || updateUserLoading;
-
-  const handleUserSubmit = user => {
-    if (userOnEdit) {
-      // Update
-      updateUser({
-        id: userOnEdit.id,
-        body: user,
-      });
-    } else {
-      // Create
-      createUser({body: user});
-    }
-    setUserOnEdit(undefined);
-  };
+  const error = listUsersError || deleteUserError;
+  const loading = listUsersLoading || deleteUserLoading;
 
   const handleUserRemove = id => {
+    setValidationError(undefined);
     deleteUser({id});
   };
 
   const handleUserEdit = user => {
-    setUserOnEdit(user);
+    navigation.navigate('UserForm', { userId: user?.id, userName: `${user?.firstName} ${user?.lastName}` });
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await logout();
     setSessionToken(undefined);
+    navigation.navigate("Login");
   };
+
+  const goToUser = id => {
+    navigation.navigate("User", { userId: id });
+  }
 
   return (
       <View style={styles.container}>
         {loading && <View><Text>Cargando...</Text></View>}
-        {error && <View><Text>Error: {error}</Text></View>}
+        {error && !validationError && <View><Text>Error: {error}</Text></View>}
+        {validationError && <View><Text>Error de validacion: {validationError}</Text></View>}
         <Button title='Logout' onPress={handleLogout} />
         <ScrollView style={styles.list}>
           <UsersList
             data={users || []}
             onEdit={handleUserEdit}
             onRemove={handleUserRemove}
+            onShow={goToUser}
           />
         </ScrollView>
-        <View style={styles.form}>
-          <UserForm
-            style={styles.bordered}
-            onUserSubmit={handleUserSubmit}
-            userOnEdit={userOnEdit}
-          />
-        </View>
+        <Button title="Agregar usuario" onPress={() => navigation.navigate("UserForm")} />
+        <Button title="Volver a Home" onPress={() => navigation.navigate("Home")} />
       </View>
   );
 };
