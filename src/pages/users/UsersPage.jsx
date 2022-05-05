@@ -1,11 +1,11 @@
 import { useIsFocused } from '@react-navigation/native';
 import { useEffect, useContext } from 'react';
 import { View, ScrollView, Text, Button } from 'react-native';
-import { useLogout } from '../api/sessions';
-import { useDeleteUser, useListUsers } from '../api/users';
-import UsersList from '../components/UsersList';
-import SessionContext from '../contexts/sessionContext';
-import styles from '../styles';
+import { useLogout } from '../../api/sessions';
+import { useDeleteUser, useListUsers } from '../../api/users';
+import UsersList from '../../components/UsersList';
+import SessionContext from '../../contexts/sessionContext';
+import styles from '../../styles';
 
 const UsersPage = props => {
   const navigation = props.navigation;
@@ -49,7 +49,7 @@ const UsersPage = props => {
   };
 
   const handleUserEdit = user => {
-    navigation.navigate('UserForm', { userId: user?.id, userName: `${user?.firstName} ${user?.lastName}` });
+    navigation.navigate('Users', { screen: 'Form', params: { userId: user?.id, userName: `${user?.firstName} ${user?.lastName}` } });
   };
 
   const handleLogout = async () => {
@@ -59,7 +59,7 @@ const UsersPage = props => {
   };
 
   const goToUser = id => {
-    navigation.navigate("User", { userId: id });
+    navigation.navigate("Users", { screen: 'Show', params: { userId: id } });
   }
 
   return (
@@ -76,8 +76,9 @@ const UsersPage = props => {
             onShow={goToUser}
           />
         </ScrollView>
-        <Button title="Agregar usuario" onPress={() => navigation.navigate("UserForm")} />
+        <Button title="Agregar usuario" onPress={() => navigation.navigate("Users", { screen: 'Form' })} />
         <Button title="Volver a Home" onPress={() => navigation.navigate("Home")} />
+        <Button title="Ayuda" onPress={() => navigation.navigate("Home", { screen: "Help", params: { text: 'Ayudame!' } })} />
       </View>
   );
 };

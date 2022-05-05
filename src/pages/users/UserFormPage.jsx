@@ -1,9 +1,9 @@
 import React, { useContext, useEffect } from 'react';
-import { Text, View } from 'react-native';
-import { useCreateUser, useGetUser, useUpdateUser } from '../api/users';
-import UserForm from '../components/UserForm';
-import SessionContext from '../contexts/sessionContext';
-import styles from '../styles';
+import { Text, View, Button } from 'react-native';
+import { useCreateUser, useGetUser, useUpdateUser } from '../../api/users';
+import UserForm from '../../components/UserForm';
+import SessionContext from '../../contexts/sessionContext';
+import styles from '../../styles';
 
 const UserFormPage = props => {
 
@@ -37,7 +37,7 @@ const UserFormPage = props => {
 
     useEffect(() => {
         if (updateUserData || createUserData) {
-            navigation.navigate('Users');
+            navigation.navigate('Users', { screen: 'List' });
         }
     }, [updateUserData, createUserData])
 
@@ -67,6 +67,7 @@ const UserFormPage = props => {
                 onUserSubmit={handleUserSubmit}
                 userOnEdit={getUserData}
             />
+            <Button title="Volver" onPress={() => navigation.navigate("Users", { screen: 'List' })} />
         </View>
     );
 };

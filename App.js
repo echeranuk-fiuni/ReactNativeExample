@@ -1,34 +1,42 @@
+import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
-import { View, Text, Button } from 'react-native';
 import SessionContextProvider from './src/contexts/SessionContextProvider';
+import HomeNavigator from './src/pages/home/HomeNavigator';
 import LoginPage from './src/pages/LoginPage';
-import UserFormPage from './src/pages/UserFormPage';
-import UserPage from './src/pages/UserPage';
-import UsersPage from './src/pages/UsersPage';
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import UsersNavigator from './src/pages/users/UsersNavigator';
 
-const Stack = createNativeStackNavigator();
+const Drawer = createDrawerNavigator();
+
+const getHeaderTitle = route => {
+    const routeName = route?.name ?? 'Home';
+    console.log('Route', routeName, route);
+    switch (routeName) {
+        case 'List':
+            return 'Usuarios';
+        case 'Show':
+            return 'Datos de Usuario';
+        case 'Form':
+            return route?.params?.userName ? `Actualizar ${route?.params?.userName}` : 'Agregar Usuario';
+    }
+};
 
 const App = () => {
     return (
         <SessionContextProvider>
             <NavigationContainer>
-                <Stack.Navigator initialRouteName='Home'>
-                    <Stack.Screen name="Home">
-                        {props => (
-                            <View>
-                                <Text {...props} style={{ color: 'blue' }}>Hola Mundo!</Text>
-                                <Button title="Ingresar" onPress={() => props.navigation.navigate("Login")} />
-                                <Button title="Ir a usuarios" onPress={() => props.navigation.navigate("Users")} />
-                            </View>
-                        )}
-                    </Stack.Screen>
-                    <Stack.Screen name="Users" component={UsersPage} options={{ title: 'Usuarios' }} />
-                    <Stack.Screen name="Login" component={LoginPage} options={{ title: 'Ingresar' }} />
-                    <Stack.Screen name="User" component={UserPage} options={{ title: 'Datos de Usuario' }} />
-                    <Stack.Screen name="UserForm" component={UserFormPage} options={ ({ route }) => ({ title: route?.params?.userName ? `Actualizar ${route?.params?.userName}` : 'Agregar Usuario' }) } />
-                </Stack.Navigator>
+                <Drawer.Navigator initialRouteName='Home'>
+                    <Drawer.Screen name="Home" component={HomeNavigator} options={{ title: 'Principal' }} />
+                    <Drawer.Screen
+                        name="Users"
+                        component={UsersNavigator}
+                        options={({ route }) => ({
+                            headerTitle: getHeaderTitle(route),
+                            title: 'Usuarios'
+                        })} />
+                    <Drawer.Screen name="Login" component={LoginPage} options={{ title: 'Ingresar' }} />
+                </Drawer.Navigator>
             </NavigationContainer>
         </SessionContextProvider>
     );

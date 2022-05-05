@@ -27,7 +27,7 @@ const LoginPage = props => {
 
     useEffect(() => {
         if (sessionToken) {
-            navigation.navigate('Users');
+            navigation.navigate('Users', { screen: 'List' });
         }
     }, [sessionToken]);
 
